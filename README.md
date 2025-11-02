@@ -10,13 +10,13 @@ Manohara A R
 Email:
 manohara.a@mastercom.co.in
 # Team Members:
-Rahul Murali
-veershetti Naveen Kumar
-Manjula R
-Siva Kumar Annam
+Rahul Murali, 
+veershetti Naveen Kumar, 
+Manjula R, 
+Siva Kumar Annam, 
 
  
-#Table of Contents
+# Table of Contents
 1.	Abstract
 2.	Problem Statement
 3.	Solution Overview
@@ -30,25 +30,25 @@ Siva Kumar Annam
 11.	Conclusion
 12.	Attachments
  
-#1. Abstract
+# 1. Abstract
 This project demonstrates a self-healing, AI-powered Kubernetes monitoring solution by integrating automation capabilities of IBM Watsonx Orchestrate with Kubernetes cluster operations. Continuous health checks, anomaly detection, and auto-remediation workflows drastically reduce downtime and manual intervention, while ensuring real-time visibility through Slack and email notifications, and robust historical audit via MySQL.
  
-#2. Problem Statement
+# 2. Problem Statement
 Modern cloud environments rely on Kubernetes for hosting critical workloads, but:
 •	Manual cluster health inspection is labor-intensive and error-prone.
 •	Delayed anomaly detection leads to prolonged outages.
 •	Lack of remediation automation increases MTTR (Mean Time to Recovery).
-#Goal:
+# Goal:
 To automate Kubernetes cluster health monitoring, anomaly detection, and remediation using Watsonx Orchestrate for a highly reliable, self-healing cloud-native infrastructure.
  
-#3. Solution Overview
+# 3. Solution Overview
 •	Continuous Monitoring: Python/Shell scripts periodically evaluate cluster health.
 •	Anomaly Detection: Automatic identification of pod failures, resource spikes, and system errors.
 •	Auto-Remediation: Failed pods are programmatically restarted/removed, with issues logged and tracked in MySQL.
 •	Real-time Notifications: Immediate Slack alerts and admin email summaries for critical events.
 •	Central Orchestration: Watsonx Orchestrate triggers and coordinates all automation via OpenAPI integrations.
  
-#4. System Architecture
+# 4. System Architecture
 Components:
 •	Kubernetes Cluster (Minikube demo): Application and pod execution environment.
 •	Watsonx Orchestrate: Automation control layer, invoking OpenAPI tools for monitoring/remediation.
@@ -64,7 +64,7 @@ Component Descriptions:
 •	MySQL: Anomaly and resolution log store.
 •	Slack/Email: Notification/alert channels.
  
-#5. Implementation Details
+# 5. Implementation Details
   1. Configuration and Initialization
 •	Load script and environment variables for Kubernetes, MySQL, Slack, and email integration.
 •	Create and manage temporary directories and run counters for periodic log cleanup.
