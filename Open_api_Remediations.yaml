@@ -1,0 +1,19 @@
+openapi: 3.1.0
+info:
+  title: K8s Monitor Script API
+  description: Trigger the monitor.sh script on Minikube via REST.
+  version: 1.0.0
+
+servers:
+  - url: https://vitaminic-tu-catalytically.ngrok-free.dev
+
+paths:
+  /run-monitor:
+    post:
+      summary: Execute monitor.sh
+      operationId: runMonitorScript
+      responses:
+        "200":
+          description: Script executed successfully
+        "500":
+          description: Script execution failed

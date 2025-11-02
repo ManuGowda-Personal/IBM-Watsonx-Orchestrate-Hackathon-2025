@@ -1,0 +1,125 @@
+openapi: 3.1.0
+info:
+  title: Minikube-Cluster-Monitor-Tool
+  description: |
+    This OpenAPI definition enables Watsonx Orchestrate to monitor
+    and perform automated actions on a local Minikube Kubernetes cluster.
+    It uses the Kubernetes REST API with Bearer Token authentication.
+  version: 1.0.0
+
+servers:
+  - url: https://vitaminic-tu-catalytically.ngrok-free.dev
+    description: Local Minikube API Server
+    variables:
+      insecure-skip-tls-verify:
+        default: "true"
+
+security:
+  - BearerAuth: []
+
+paths:
+  /api/v1/pods:
+    get:
+      summary: List all pods in all namespaces
+      operationId: listAllPods
+      responses:
+        '200':
+          description: List of pods
+
+  /api/v1/nodes:
+    get:
+      summary: List all nodes in the cluster
+      operationId: listNodes
+      responses:
+        '200':
+          description: List of nodes
+
+  /api/v1/namespaces/{namespace}/pods/{pod}/log:
+    get:
+      summary: Get logs for a specific pod
+      operationId: getPodLogs
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: pod
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Pod logs
+
+  /api/v1/namespaces/{namespace}/pods/{pod}:
+    delete:
+      summary: Delete a specific pod
+      operationId: deletePod
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: pod
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Pod deleted
+
+  /api/v1/services:
+    get:
+      summary: List all Services in all namespaces
+      operationId: listServices
+      responses:
+        '200':
+          description: List of Services
+
+
+  /apis/apps/v1/namespaces/{namespace}/deployments/{deployment}/scale:
+    put:
+      summary: Scale a specific deployment
+      operationId: scaleDeployment
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: deployment
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                spec:
+                  type: object
+                  properties:
+                    replicas:
+                      type: integer
+      responses:
+        '200':
+          description: Deployment scaled successfully
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+x-authentication:
+  type: BearerToken
+  token: >
+    eyJhbGciOiJSUzI1NiIsImtpZCI6ImsyZVo1RzByNTRZZ19CR3cwOWlXd1VuQ3lmbktpaVBLWHNheGNIRi1lV00ifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJ3YXRzb254LWFnZW50LXNhLXRva2VuIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6IndhdHNvbngtYWdlbnQtc2EiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiI1YjMwMWEzNi0zZDlkLTQwNDEtYmI5Ny1jYmJlYzQ0M2M5ZDAiLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6a3ViZS1zeXN0ZW06d2F0c29ueC1hZ2VudC1zYSJ9.QOWmUXeISTkTcA3a4731cNe4dnydT5MakjwSIsceLCnu76jnHdV1aN_JoFIzjVSN-ZhKdvr6YRTdNX8E1JWGiygpXtv5nQ37p_xg4U_0TFspUzmxv3Rmaf4BN324LXVvVAfPMUHqOPRNbUwS4PgBdnX5guY984m2PhP_sKBf-oONi607e3Uh-1IPF9kQT5kuZBz-dndxB5yGUFjIUcoaopXxecrQCD5uNLYmbvbb9_kchTNPmrV1H6MED08as2elVdsdU8wLmoCQrdCH9njN6acI1ICVMF031bMliFlfKa9uv9FIt1ViUw4f_tUrG5DeQDLy9OPhk8eGPgemT8bMDQ

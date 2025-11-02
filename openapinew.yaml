@@ -1,0 +1,108 @@
+openapi: 3.1.0
+info:
+  title: EKS-Cluster-Monitor-Tool
+  description: |
+    This tool allows watsonx Orchestrate to monitor and perform actions
+    on the EKS cluster using Kubernetes API.
+    Includes pod listing, logs, node info, scaling, and pod deletion.
+    Scope: All namespaces.
+  version: 1.0.0
+
+servers:
+  - url: https://B1A09F74A3F7F59B46338B1589B716B8.gr7.ap-south-1.eks.amazonaws.com
+
+security:
+  - BearerAuth: []
+
+paths:
+  /api/v1/pods:
+    get:
+      summary: List all pods in all namespaces
+      operationId: listAllPods
+      responses:
+        '200':
+          description: List of pods
+  /api/v1/nodes:
+    get:
+      summary: List all nodes in the cluster
+      operationId: listNodes
+      responses:
+        '200':
+          description: List of nodes
+  /api/v1/namespaces/{namespace}/pods/{pod}/log:
+    get:
+      summary: Get logs for a specific pod
+      operationId: getPodLogs
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: pod
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Pod logs
+  /api/v1/namespaces/{namespace}/pods/{pod}:
+    delete:
+      summary: Delete a specific pod
+      operationId: deletePod
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: pod
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Pod deleted
+  /apis/apps/v1/namespaces/{namespace}/deployments/{deployment}/scale:
+    post:
+      summary: Scale a specific deployment
+      operationId: scaleDeployment
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: deployment
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                spec:
+                  type: object
+                  properties:
+                    replicas:
+                      type: integer
+      responses:
+        '200':
+          description: Deployment scaled successfully
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+x-authentication:
+  type: BearerToken
+  token: "eyJhbGciOiJSUzI1NiIsImtpZCI6IlRaM2V1bUxYY0FjMU9iODN6RWI1Z19tZVVqaUw5UTZZd1JReHk3UjZNUTAifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJ3YXRzb254LWFnZW50LXNhLXRva2VuIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6IndhdHNvbngtYWdlbnQtc2EiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiJjMmZiMDM2ZS1mZGNjLTRlZmItYTY0ZC1iZjlmODBhYmJiZDEiLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6a3ViZS1zeXN0ZW06d2F0c29ueC1hZ2VudC1zYSJ9.YvfygCOl8yh7Opon4AtZgispi-oZoI4_v36q3IZCa_kPymLCaHbKJmu1JDlB7IFyM5ED8EZIhUSli5T_HJZjuabctldTBjL1aABcUL_xXGSNuKFzFFNVWn4-eKWKRRn4FE_V4iK-f4H_GkFaaWYo-6lCq6Eu_ynTjkNZuxg9L5iY93FPzFza1UuMlYToMX2fpkYsZQasUcwc6SHUyhNpMxfdq_QY1PO5Z0L-o4fUtVvjp01VJy-Wk3jZfbX4fpEkKzYDqqM4zmv22ZDtj2zjUrCkGynesmaMQOvHpuqi1d9w6ptUAdB_cRIBmV7lA5b2hgkujr7HmfOdHXi38X6-Yw"
