@@ -1,0 +1,150 @@
+# yaml-language-server: $schema=https://spec.openapis.org/oas/3.1/schema/2022-10-07
+
+openapi: 3.1.0
+info:
+  title: Minikube-Cluster-Monitor-Tool
+  description: |
+    This OpenAPI definition enables Watsonx Orchestrate to monitor
+    and perform automated actions on a local Minikube Kubernetes cluster.
+    It uses the Kubernetes REST API with Bearer Token authentication,
+    and integrates Slack notifications for alerts and auto-remediation.
+  version: 1.0.2
+
+  x-orchestrate-actions:
+    - name: "Monitor Pod Health"
+      description: |
+        Checks all pods. If phase != Running or contains
+        CrashLoopBackOff / Error / Pending / OOMKilled,
+        sends Slack alert and deletes pod to restart automatically.
+      trigger: "Every 5 mins"
+      run:
+        type: shell
+        command: |
+          POD_ISSUES=$(kubectl get pods -A --no-headers | grep -E 'CrashLoopBackOff|Error|Pending|OOMKilled')
+          if [[ -n "$POD_ISSUES" ]]; then
+            curl -X POST -H 'Content-type: application/json' \
+            --data "{\"text\":\"🚨 *Pod Issue Detected*:\n\`\`\`$POD_ISSUES\`\`\`\"}" \
+            https://hooks.slack.com/services/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
+          fi
+
+    - name: "Monitor Resource Usage"
+      description: |
+        Fetches node/pod CPU & memory usage via metrics API.
+        If CPU > 80% or Memory > 80%, sends Slack alert.
+      trigger: "Every 5 mins"
+      run:
+        type: shell
+        command: |
+          CPU=$(kubectl top nodes --no-headers | awk '{sum+=$3} END {print sum}')
+          MEM=$(kubectl top nodes --no-headers | awk '{sum+=$5} END {print sum}')
+          if (( CPU > 8000 )); then
+            curl -X POST -H 'Content-type: application/json' \
+            --data "{\"text\":\"🔥 *High CPU Usage Detected*: ${CPU}m\"}" \
+            https://hooks.slack.com/services/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
+          fi
+          if (( MEM > 16000 )); then
+            curl -X POST -H 'Content-type: application/json' \
+            --data "{\"text\":\"💾 *High Memory Usage Detected*: ${MEM}Mi\"}" \
+            https://hooks.slack.com/services/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
+          fi
+
+    - name: "Auto Remediation"
+      description: |
+        Automatically restarts unhealthy pods.
+        Triggered when pod issues detected or resource alerts fired.
+      trigger: "Triggered by alert"
+      run:
+        type: shell
+        command: |
+          for pod in $(kubectl get pods -A --no-headers | grep -E 'CrashLoopBackOff|Error|Pending|OOMKilled' | awk '{print $2}'); do
+            ns=$(kubectl get pods -A | grep $pod | awk '{print $1}')
+            kubectl delete pod $pod -n $ns
+            curl -X POST -H 'Content-type: application/json' \
+            --data "{\"text\":\"🔁 *Auto-Remediation*: Restarted pod ${pod} in namespace ${ns}.\"}" \
+            https://hooks.slack.com/services/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
+          done
+
+    - name: "Send Slack Alert"
+      description: |
+        Sends a manual or automated alert message to Slack via webhook.
+      trigger: "Triggered by any alert condition"
+
+servers:
+  - url: https://vitaminic-tu-catalytically.ngrok-free.dev
+    description: Local Minikube API Server
+    variables:
+      insecure-skip-tls-verify:
+        default: "true"
+
+  - url: https://hooks.slack.com/services/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
+    description: Slack Webhook Endpoint
+
+security:
+  - BearerAuth: []
+
+paths:
+  /api/v1/pods:
+    get:
+      summary: List all pods in all namespaces
+      operationId: listAllPods
+      responses:
+        '200':
+          description: List of pods
+
+  /api/v1/namespaces/{namespace}/pods/{pod}/status:
+    get:
+      summary: Get current status of a specific pod
+      operationId: getPodStatus
+      parameters:
+        - name: namespace
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: pod
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Pod status details
+
+  /apis/metrics.k8s.io/v1beta1/nodes:
+    get:
+      summary: Get live CPU & memory usage of all nodes
+      operationId: getNodeMetrics
+      responses:
+        '200':
+          description: Node metrics retrieved
+
+  /send-alert:
+    post:
+      summary: Send custom alert to Slack
+      operationId: sendSlackAlert
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+                  example: "🚨 ALERT: High CPU usage on node minikube-node1 (92%)"
+      responses:
+        "200":
+          description: Alert sent successfully
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+x-authentication:
+  type: BearerToken
+  token: >
+    eyJhbGciOiJSUzI1NiIsImtpZCI6ImsyZVo1RzByNTRZZ19CR3cwOWlXd1VuQ3lmbktpaVBLWHNheGNIRi1lV00ifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJ3YXRzb254LWFnZW50LXNhLXRva2VuIiwia3ViZXJuZXRlcy5pby9z
+
