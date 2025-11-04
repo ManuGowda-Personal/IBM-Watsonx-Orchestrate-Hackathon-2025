@@ -57,7 +57,7 @@ Components:
 •	Slack & Email Integrations: Notifies stakeholders about detection/resolution events.
 Diagram:
 Attached as a File.
-
+![image alt](https://github.com/ManuGowda-Personal/IBM-Watsonx-Orchestrate-Hackathon-2025/blob/46c560203fab0e197e662ea0d323eae14a94626f/architecture.png)
 Component Descriptions:
 •	Orchestrate: Orchestration engine and scheduler.
 •	Flask Agent: Custom API connecting Orchestrate to K8s & DB.
@@ -174,6 +174,15 @@ This project validates that combining Watsonx Orchestrate with agent-based autom
 
 # 13.	Final Results
 Attached as a Files.
- 
+ ![image alt](https://github.com/ManuGowda-Personal/IBM-Watsonx-Orchestrate-Hackathon-2025/blob/46c560203fab0e197e662ea0d323eae14a94626f/cluster_health.png)
+
+![image alt](https://github.com/ManuGowda-Personal/IBM-Watsonx-Orchestrate-Hackathon-2025/blob/46c560203fab0e197e662ea0d323eae14a94626f/pods.png)
+![image alt](https://github.com/ManuGowda-Personal/IBM-Watsonx-Orchestrate-Hackathon-2025/blob/46c560203fab0e197e662ea0d323eae14a94626f/services.png)
+![image alt](https://github.com/ManuGowda-Personal/IBM-Watsonx-Orchestrate-Hackathon-2025/blob/46c560203fab0e197e662ea0d323eae14a94626f/pods.png)
+![image alt](https://github.com/ManuGowda-Personal/IBM-Watsonx-Orchestrate-Hackathon-2025/blob/46c560203fab0e197e662ea0d323eae14a94626f/services.png)
+![image alt](https://github.com/ManuGowda-Personal/IBM-Watsonx-Orchestrate-Hackathon-2025/blob/46c560203fab0e197e662ea0d323eae14a94626f/slack.png)
+![image alt](https://github.com/ManuGowda-Personal/IBM-Watsonx-Orchestrate-Hackathon-2025/blob/46c560203fab0e197e662ea0d323eae14a94626f/mail.png)
+![image alt](https://github.com/ManuGowda-Personal/IBM-Watsonx-Orchestrate-Hackathon-2025/blob/46c560203fab0e197e662ea0d323eae14a94626f/MYSQL_Anamolies.png)
+![image alt](https://github.com/ManuGowda-Personal/IBM-Watsonx-Orchestrate-Hackathon-2025/blob/46c560203fab0e197e662ea0d323eae14a94626f/k8.png)
 
  
